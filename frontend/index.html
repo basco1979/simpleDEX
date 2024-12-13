@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple DEX</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="container my-5">
+        <h1 class="text-center mb-4">SimpleDEX</h1>
+
+        <div class="text-center mb-4">
+            <button class="btn btn-primary" id="connectWalletButton" onclick="connectWallet()">Connect Wallet</button>
+            <p class="mt-2">Wallet Address: <span id="walletStatus">Not Connected</span></p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Token Balances</h2>
+                <div class="mb-3">
+                    <input id="tokenAddressBalance" type="text" class="form-control" placeholder="Token Address">
+                </div>
+                <button class="btn btn-primary" onclick="getBalanceOf()">Get Token Balance</button>
+                <p id="balanceResult" class="mt-3"></p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Check Allowance</h2>
+                <div class="mb-3">
+                    <input id="walletAddress" type="text" class="form-control" placeholder="Wallet Address" disabled>
+                </div>
+                <div class="mb-3">
+                    <input id="tokenAddressAllowance" type="text" class="form-control" placeholder="Token Address">
+                </div>
+                <button class="btn btn-primary" onclick="getAllowance()">Check Allowance</button>
+                <p id="allowanceResult" class="mt-3"></p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Approve Tokens</h2>
+                <div class="mb-3">
+                    <input id="tokenAddressApprove" type="text" class="form-control" placeholder="Token Address">
+                </div>
+                <div class="mb-3">
+                    <input id="approveAmount" type="number" class="form-control" placeholder="Amount to Approve">
+                </div>
+                <button class="btn btn-success" onclick="approveToken()">Approve</button>
+                <p id="approveResult" class="mt-3"></p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Add Liquidity</h2>
+                <div class="mb-3">
+                    <input id="addAmountA" type="number" class="form-control" placeholder="Amount of Token A">
+                </div>
+                <div class="mb-3">
+                    <input id="addAmountB" type="number" class="form-control" placeholder="Amount of Token B">
+                </div>
+                <button class="btn btn-info" onclick="addLiquidity()">Add Liquidity</button>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Remove Liquidity</h2>
+                <div class="mb-3">
+                    <input id="removeAmountA" type="number" class="form-control" placeholder="Amount of Token A">
+                </div>
+                <div class="mb-3">
+                    <input id="removeAmountB" type="number" class="form-control" placeholder="Amount of Token B">
+                </div>
+                <button class="btn btn-warning" onclick="removeLiquidity()">Remove Liquidity</button>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Swap Tokens</h2>
+                <h3>Swap A for B</h3>
+                <div class="mb-3">
+                    <input id="swapAmountA" type="number" class="form-control" placeholder="Amount of Token A">
+                </div>
+                <button class="btn btn-dark" onclick="swapAforB()">Swap A for B</button>
+
+                <h3 class="mt-4">Swap B for A</h3>
+                <div class="mb-3">
+                    <input id="swapAmountB" type="number" class="form-control" placeholder="Amount of Token B">
+                </div>
+                <button class="btn btn-dark" onclick="swapBforA()">Swap B for A</button>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Get Token Price</h2>
+                <div class="mb-3">
+                    <input id="priceToken" type="text" class="form-control" placeholder="Token Address">
+                </div>
+                <button class="btn btn-secondary" onclick="getPrice()">Get Price</button>
+                <p id="priceResult" class="mt-3"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js" defer></script>
+</body>
+
+</html>
