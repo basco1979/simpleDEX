@@ -205,13 +205,14 @@ const erc20ABI = [
 let provider, signer, dexContract
 //const walletAddressInput = document.getElementById('walletAddress')
 
-  async function connectWallet() {
+async function connectWallet() {
             if (typeof window.ethereum !== 'undefined') {
                 try {
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
                     const accounts = await provider.send('eth_requestAccounts', []);
                     const walletAddress = accounts[0];
                     document.getElementById('walletStatus').textContent = walletAddress;
+                    document.getElementById('connectWalletButton').style.display = 'none';
                 } catch (error) {
                     console.error('Error connecting wallet:', error);
                 }
@@ -252,6 +253,7 @@ async function getBalanceOf() {
     alert('Error fetching balance.')
   }
 }
+
 
 async function getAllowance() {
   const account = await getAccount()

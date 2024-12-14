@@ -5,37 +5,32 @@ pragma solidity ^0.8.22;
 import "./node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
+/// @title Simple Decentralized Exchange (DEX)
+/// @notice This contract facilitates token swaps and liquidity management
+/// @dev Uses constant product formula for swaps
+/// @author [Seba Basco]
 contract SimpleDEX is Ownable {
-    /// @notice Tokens in the liquidity pool
+    /// @notice Token A in the liquidity pool
     IERC20 public tokenA;
+
+    /// @notice Token B in the liquidity pool
     IERC20 public tokenB;
 
     /// @notice Emitted when liquidity is added
     /// @param amountA The amount of token A added
     /// @param amountB The amount of token B added
-    event LiquidityAdded(
-        address indexed provider,
-        uint256 amountA,
-        uint256 amountB
-    );
+    event LiquidityAdded(uint256 amountA, uint256 amountB);
 
     /// @notice Emitted when liquidity is removed
     /// @param amountA The amount of token A removed
     /// @param amountB The amount of token B removed
-    event LiquidityRemoved(
-        uint256 amountA,
-        uint256 amountB
-    );
+    event LiquidityRemoved(uint256 amountA, uint256 amountB);
 
     /// @notice Emitted when a token swap occurs
     /// @param user The address of the user performing the swap
     /// @param amountIn The input token amount
     /// @param amountOut The output token amount
-    event TokensSwapped(
-        address indexed user,
-        uint256 amountIn,
-        uint256 amountOut
-    );
+    event TokenSwapped(address indexed user, uint256 amountIn, uint256 amountOut);
 
     /// @notice Initializes the DEX with two tokens
     /// @param _tokenA Address of token A
@@ -43,6 +38,7 @@ contract SimpleDEX is Ownable {
     constructor(address _tokenA, address _tokenB) Ownable(msg.sender) {
         tokenA = IERC20(_tokenA);
         tokenB = IERC20(_tokenB);
+        
     }
 
     /// @notice Adds liquidity to the pool
@@ -51,31 +47,60 @@ contract SimpleDEX is Ownable {
     /// @param amountB The amount of token B to add
     function addLiquidity(uint256 amountA, uint256 amountB) external onlyOwner {
         require(amountA > 0 && amountB > 0, "Amounts must be > 0");
-
         tokenA.transferFrom(msg.sender, address(this), amountA);
         tokenB.transferFrom(msg.sender, address(this), amountB);
 
-        emit LiquidityAdded(msg.sender, amountA, amountB);
+        emit LiquidityAdded(amountA, amountB);
     }
 
     /// @notice Removes liquidity from the pool
     /// @dev Only callable by the owner
     /// @param amountA The amount of token A to remove
     /// @param amountB The amount of token B to remove
-    function removeLiquidity(uint256 amountA, uint256 amountB)
-        external
-        onlyOwner
-    {
-        require(
-            amountA <= tokenA.balanceOf(address(this)) &&
-                amountB <= tokenB.balanceOf(address(this)),
-            "Low liquidity"
-        );
+    function removeLiquidity(uint256 amountA, uint256 amountB) external onlyOwner {
+        require(amountA <= tokenA.balanceOf(address(this)) && amountB <= tokenB.balanceOf(address(this)), "Low liquidity");
 
         tokenA.transfer(msg.sender, amountA);
         tokenB.transfer(msg.sender, amountB);
 
         emit LiquidityRemoved(amountA, amountB);
+    }
+
+    /// @notice Swaps token A for token B
+    /// @param amountAIn The amount of token A to swap
+    function swapAforB(uint256 amountAIn) external {
+        require(amountAIn > 0, "Amount must be > 0");
+
+        uint256 amountBOut = getAmountOut(amountAIn, tokenA.balanceOf(address(this)), tokenB.balanceOf(address(this)));
+
+        tokenA.transferFrom(msg.sender, address(this), amountAIn);
+        tokenB.transfer(msg.sender, amountBOut);
+
+        emit TokenSwapped(msg.sender, amountAIn, amountBOut);
+    }
+
+    /// @notice Swaps token B for token A
+    /// @param amountBIn The amount of token B to swap
+    function swapBforA(uint256 amountBIn) external {
+        require(amountBIn > 0, "Amount must be > 0");
+
+        uint256 amountAOut = getAmountOut(amountBIn, tokenB.balanceOf(address(this)), tokenA.balanceOf(address(this)));
+
+        tokenB.transferFrom(msg.sender, address(this), amountBIn);
+        tokenA.transfer(msg.sender, amountAOut);
+
+        emit TokenSwapped(msg.sender, amountBIn, amountAOut);
+    }
+
+    /// @notice Gets the price of a token relative to the other
+    /// @param _token Address of the token to price
+    /// @return The price in terms of the other token
+    function getPrice(address _token) external view returns (uint256) {
+        require(_token == address(tokenA) || _token == address(tokenB), "Invalid token");
+
+        return _token == address(tokenA)
+            ? (tokenB.balanceOf(address(this)) * 1e18) / tokenA.balanceOf(address(this))
+            : (tokenA.balanceOf(address(this)) * 1e18) / tokenB.balanceOf(address(this));
     }
 
     /// @notice Calculates the output amount of a swap
@@ -84,67 +109,7 @@ contract SimpleDEX is Ownable {
     /// @param reserveIn The reserve of the input token
     /// @param reserveOut The reserve of the output token
     /// @return The amount of output tokens
-    function getSwapAmount(
-        uint256 amountIn,
-        uint256 reserveIn,
-        uint256 reserveOut
-    ) public pure returns (uint256) {
-        require(amountIn > 0, "Amount in must be > 0");
-
-        uint256 swapAmount = reserveOut -
-            ((reserveIn * reserveOut) / (reserveIn + amountIn));
-        return swapAmount;
-    }
-
-    /// @notice Swaps token A for token B
-    /// @param amountAIn The amount of token A to swap
-    function swapAforB(uint256 amountAIn) external {
-        require(amountAIn > 0, "Amount must be > 0");
-
-        uint256 amountBOut = getSwapAmount(
-            amountAIn,
-            tokenA.balanceOf(address(this)),
-            tokenB.balanceOf(address(this))
-        );
-        require(amountBOut > 0, "Invalid swap amount");
-
-        tokenA.transferFrom(msg.sender, address(this), amountAIn);
-        tokenB.transfer(msg.sender, amountBOut);
-
-        emit TokensSwapped(msg.sender, amountAIn, amountBOut);
-    }
-
-    /// @notice Swaps token B for token A
-    /// @param amountBIn The amount of token B to swap
-    function swapBforA(uint256 amountBIn) external {
-        require(amountBIn > 0, "Amount must be > 0");
-
-        uint256 amountAOut = getSwapAmount(
-            amountBIn,
-            tokenB.balanceOf(address(this)),
-            tokenA.balanceOf(address(this))
-        );
-
-        tokenB.transferFrom(msg.sender, address(this), amountBIn);
-        tokenA.transfer(msg.sender, amountAOut);
-
-        emit TokensSwapped(msg.sender, amountBIn, amountAOut);
-    }
-
-    /// @notice Gets the price of a token relative to the other
-    /// @param _token Address of the token to price
-    /// @return The price in terms of the other token
-    function getPrice(address _token) external view returns (uint256) {
-        require(
-            _token == address(tokenA) || _token == address(tokenB),
-            "Invalid token"
-        );
-
-        return
-            _token == address(tokenA)
-                ? (tokenB.balanceOf(address(this)) * 1e18) /
-                    tokenA.balanceOf(address(this))
-                : (tokenA.balanceOf(address(this)) * 1e18) /
-                    tokenB.balanceOf(address(this));
+    function getAmountOut(uint256 amountIn, uint256 reserveIn, uint256 reserveOut) private pure returns (uint256) {
+        return (amountIn * reserveOut) / (reserveIn + amountIn);
     }
 }

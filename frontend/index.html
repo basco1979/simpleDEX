@@ -12,11 +12,11 @@
 
 <body>
     <div class="container my-5">
-        <h1 class="text-center mb-4">SimpleDEX</h1>
+        <h1 class="text-center mb-4 main-title">SimpleDEX</h1>
 
         <div class="text-center mb-4">
             <button class="btn btn-primary" id="connectWalletButton" onclick="connectWallet()">Connect Wallet</button>
-            <p class="mt-2">Wallet Address: <span id="walletStatus">Not Connected</span></p>
+           <p class="mt-2 wallet-status not-connected">Wallet Address: <span id="walletStatus">Not Connected</span></p>
         </div>
 
         <div class="card mb-4">
@@ -26,21 +26,20 @@
                     <input id="tokenAddressBalance" type="text" class="form-control" placeholder="Token Address">
                 </div>
                 <button class="btn btn-primary" onclick="getBalanceOf()">Get Token Balance</button>
-                <p id="balanceResult" class="mt-3"></p>
+                <p id="balanceResult" class="mt-3 result-box"></p>
             </div>
         </div>
+
+        
 
         <div class="card mb-4">
             <div class="card-body">
                 <h2 class="card-title">Check Allowance</h2>
                 <div class="mb-3">
-                    <input id="walletAddress" type="text" class="form-control" placeholder="Wallet Address" disabled>
-                </div>
-                <div class="mb-3">
                     <input id="tokenAddressAllowance" type="text" class="form-control" placeholder="Token Address">
                 </div>
                 <button class="btn btn-primary" onclick="getAllowance()">Check Allowance</button>
-                <p id="allowanceResult" class="mt-3"></p>
+                <p id="allowanceResult" class="mt-3 result-box"></p>
             </div>
         </div>
 
@@ -54,7 +53,7 @@
                     <input id="approveAmount" type="number" class="form-control" placeholder="Amount to Approve">
                 </div>
                 <button class="btn btn-success" onclick="approveToken()">Approve</button>
-                <p id="approveResult" class="mt-3"></p>
+                <p id="approveResult" class="mt-3" result-box></p>
             </div>
         </div>
 
@@ -108,7 +107,7 @@
                     <input id="priceToken" type="text" class="form-control" placeholder="Token Address">
                 </div>
                 <button class="btn btn-secondary" onclick="getPrice()">Get Price</button>
-                <p id="priceResult" class="mt-3"></p>
+                <p id="priceResult" class="mt-3 result-box"></p>
             </div>
         </div>
     </div>
