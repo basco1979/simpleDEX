@@ -16,7 +16,7 @@
 
         <div class="text-center mb-4">
             <button class="btn btn-primary" id="connectWalletButton" onclick="connectWallet()">Connect Wallet</button>
-           <p class="mt-2 wallet-status not-connected">Wallet Address: <span id="walletStatus">Not Connected</span></p>
+            <p class="mt-2 wallet-status not-connected">Wallet Address: <span id="walletStatus">Not Connected</span></p>
         </div>
 
         <div class="card mb-4">
@@ -30,7 +30,28 @@
             </div>
         </div>
 
-        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Mint Tokens</h2>
+                <div class="mb-3">
+                    <input id="tokenToMint" type="text" class="form-control"
+                        placeholder="Token Address">
+                </div>
+                <div class="mb-3">
+                    <input id="mintTokenAmount" type="number" class="form-control"
+                        placeholder="Amount to Mint for Token">
+                </div>
+                <button class="btn btn-success" onclick="mintToken()">Mint Tokens</button>
+                <div id="loadingState" class="loading-overlay d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Processing, please wait...</p>
+                </div>
+                <p id="mintResult" class="mt-3 result-box"></p>
+            </div>
+        </div>
+
 
         <div class="card mb-4">
             <div class="card-body">
@@ -53,10 +74,15 @@
                     <input id="approveAmount" type="number" class="form-control" placeholder="Amount to Approve">
                 </div>
                 <button class="btn btn-success" onclick="approveToken()">Approve</button>
+                <div id="loadingStateApprove" class="loading-overlay d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Processing, please wait...</p>
+                </div>
                 <p id="approveResult" class="mt-3" result-box></p>
             </div>
         </div>
-
         <div class="card mb-4">
             <div class="card-body">
                 <h2 class="card-title">Add Liquidity</h2>
@@ -67,6 +93,12 @@
                     <input id="addAmountB" type="number" class="form-control" placeholder="Amount of Token B">
                 </div>
                 <button class="btn btn-info" onclick="addLiquidity()">Add Liquidity</button>
+                <div id="loadingStateAddLiq" class="loading-overlay d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Processing, please wait...</p>
+                </div>
             </div>
         </div>
 
@@ -80,6 +112,12 @@
                     <input id="removeAmountB" type="number" class="form-control" placeholder="Amount of Token B">
                 </div>
                 <button class="btn btn-warning" onclick="removeLiquidity()">Remove Liquidity</button>
+                <div id="loadingStateRemLiq" class="loading-overlay d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Processing, please wait...</p>
+                </div>
             </div>
         </div>
 
@@ -91,12 +129,23 @@
                     <input id="swapAmountA" type="number" class="form-control" placeholder="Amount of Token A">
                 </div>
                 <button class="btn btn-dark" onclick="swapAforB()">Swap A for B</button>
-
+                <div id="loadingStateSwapAxB" class="loading-overlay d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Processing, please wait...</p>
+                </div>
                 <h3 class="mt-4">Swap B for A</h3>
                 <div class="mb-3">
                     <input id="swapAmountB" type="number" class="form-control" placeholder="Amount of Token B">
                 </div>
                 <button class="btn btn-dark" onclick="swapBforA()">Swap B for A</button>
+                <div id="loadingStateSwapBxA" class="loading-overlay d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Processing, please wait...</p>
+                </div>
             </div>
         </div>
 
